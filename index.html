@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Portfolio</title>
+    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: #1A1F2C;
+            color: #F1F0FB;
+            line-height: 1.6;
+        }
+
+        .logo {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            z-index: 1001;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(155, 135, 245, 0.3);
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(26, 31, 44, 0.95);
+            padding: 1rem;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            padding: 0.5rem 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #E5DEFF;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-links a:hover {
+            color: #9b87f5;
+            background: rgba(155, 135, 245, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Hamburger Menu Styles - Fixed */
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1001;
+            background: none;
+            border: none;
+            padding: 0.5rem;
+        }
+
+        .hamburger i {
+            font-size: 1.5rem;
+            color: #F1F0FB;
+        }
+
+        @media (max-width: 768px) {
+            .hamburger {
+                display: block;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                height: 100vh;
+                width: 70%;
+                background: rgba(26, 31, 44, 0.98);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                transition: right 0.5s ease-in-out;
+                backdrop-filter: blur(10px);
+                z-index: 1000;
+            }
+
+            .nav-links.active {
+                right: 0;
+            }
+        }
+
+        /* Hero Section Styles */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(26, 31, 44, 0.95) 0%, rgba(26, 31, 44, 0.8) 100%);
+        }
+
+        .hero-content h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero-content p {
+            font-size: 1.5rem;
+            color: #9b87f5;
+        }
+
+        /* About Section Styles */
+        .about {
+            padding: 6rem 2rem;
+            background: rgba(26, 31, 44, 0.98);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #9b87f5;
+        }
+
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .about-text {
+            background: rgba(155, 135, 245, 0.1);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Skills Section Styles */
+        .skills {
+            padding: 6rem 2rem;
+            background: rgba(26, 31, 44, 0.95);
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .skill-card {
+            background: rgba(155, 135, 245, 0.1);
+            padding: 2rem;
+            border-radius: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .skill-card:hover {
+            transform: translateY(-10px);
+            background: rgba(155, 135, 245, 0.2);
+            box-shadow: 0 10px 20px rgba(155, 135, 245, 0.2);
+        }
+
+        .skill-icon {
+            font-size: 3rem;
+            color: #9b87f5;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .skill-card:hover .skill-icon {
+            transform: scale(1.1);
+            color: white;
+        }
+
+        .skill-card h3 {
+            transition: color 0.3s ease;
+        }
+
+        .skill-card:hover h3 {
+            color: white;
+        }
+
+        .skill-card p {
+            transition: color 0.3s ease;
+        }
+
+        .skill-card:hover p {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Projects Section Styles - Enhanced */
+        .projects {
+            padding: 6rem 2rem;
+            background: rgba(26, 31, 44, 0.98);
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .project-card {
+            position: relative;
+            border-radius: 1rem;
+            overflow: hidden;
+            aspect-ratio: 16/9;
+        }
+
+        .project-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .project-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(26, 31, 44, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            transform: translateY(10px);
+        }
+
+        .project-card:hover img {
+            transform: scale(1.1);
+        }
+
+        .project-card:hover .project-overlay {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .project-overlay h3 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #F1F0FB;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            letter-spacing: 0.5px;
+        }
+
+        .project-overlay p {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.1rem;
+            color: #9b87f5;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            opacity: 0.9;
+        }
+
+        /* Contact Section Styles */
+        .contact {
+            padding: 6rem 2rem;
+            background: rgba(26, 31, 44, 0.95);
+        }
+
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(155, 135, 245, 0.1);
+            border: 1px solid rgba(155, 135, 245, 0.3);
+            border-radius: 0.5rem;
+            color: #F1F0FB;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #9b87f5;
+        }
+
+        .contact-form button {
+            padding: 1rem 2rem;
+            background: #9b87f5;
+            color: #F1F0FB;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .contact-form button:hover {
+            background: #8b77e5;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .social-links a {
+            color: #F1F0FB;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: #9b87f5;
+            transform: translateY(-5px);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="logo">
+        <img src="https://p16-sign-va.tiktokcdn.com/tos-maliva-avt-0068/4ad8b578469635ef96a490c07cd1eb76~c5_1080x1080.jpeg?lk3s=a5d48078&nonce=77904&refresh_token=b69b8e3370087bc3533104b634703eb6&x-expires=1734332400&x-signature=QNeQ2TJ0uUkL5w6Ipym60E2rkvo%3D&shp=a5d48078&shcp=81f88b70" alt="Logo">
+    </div>
+
+    <button class="hamburger" aria-label="Toggle navigation menu">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <nav class="navbar">
+        <div class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#skills">Skills</a>
+            <a href="#projects">Projects</a>
+            <a href="#contact">Contact</a>
+        </div>
+    </nav>
+
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Welcome to My Portfolio</h1>
+            <p><span id="typed-text"></span></p>
+        </div>
+    </section>
+
+    <section id="about" class="about">
+        <h2 class="section-title">About Me</h2>
+        <div class="about-content">
+            <div class="about-text">
+                <p>Hello! I'm a passionate developer with a keen eye for design and user experience. With over 1 years of experience in web development, I've had the opportunity to work on various exciting projects that have helped me grow both professionally and personally.</p>
+                <br>
+                <p>My journey in tech began when I first discovered my love for creating things on the web. Since then, I've been constantly learning and evolving, staying up-to-date with the latest technologies and best practices in web development.</p>
+                <br>
+                <p>I believe in writing clean, maintainable code and creating intuitive user experiences. My approach to development is holistic - I don't just write code, I solve problems and create solutions that make a real difference.</p>
+                <br>
+                <p>When I'm not coding, you can find me exploring new technologies, contributing to open-source projects, or sharing my knowledge through blog posts and community events. I'm always excited to take on new challenges and collaborate on interesting projects.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="skills" class="skills">
+        <h2 class="section-title">My Skills</h2>
+        <div class="skills-grid">
+            <div class="skill-card group hover:bg-[rgba(155,135,245,0.2)] transition-all duration-300 ease-in-out transform hover:scale-105 hover:-translate-y-2 hover:shadow-lg hover:shadow-[#9b87f5]/20">
+                <i class="fab fa-html5 skill-icon group-hover:text-white group-hover:scale-110 transition-all duration-300"></i>
+                <h3 class="group-hover:text-white transition-colors duration-300">HTML5</h3>
+                <p class="group-hover:text-white/80 transition-colors duration-300">Modern and semantic markup</p>
+            </div>
+            <div class="skill-card group hover:bg-[rgba(155,135,245,0.2)] transition-all duration-300 ease-in-out transform hover:scale-105 hover:-translate-y-2 hover:shadow-lg hover:shadow-[#9b87f5]/20">
+                <i class="fab fa-css3-alt skill-icon group-hover:text-white group-hover:scale-110 transition-all duration-300"></i>
+                <h3 class="group-hover:text-white transition-colors duration-300">CSS3</h3>
+                <p class="group-hover:text-white/80 transition-colors duration-300">Responsive and modern designs</p>
+            </div>
+            <div class="skill-card group hover:bg-[rgba(155,135,245,0.2)] transition-all duration-300 ease-in-out transform hover:scale-105 hover:-translate-y-2 hover:shadow-lg hover:shadow-[#9b87f5]/20">
+                <i class="fab fa-js skill-icon group-hover:text-white group-hover:scale-110 transition-all duration-300"></i>
+                <h3 class="group-hover:text-white transition-colors duration-300">JavaScript</h3>
+                <p class="group-hover:text-white/80 transition-colors duration-300">Dynamic functionality</p>
+            </div>
+            <div class="skill-card group hover:bg-[rgba(155,135,245,0.2)] transition-all duration-300 ease-in-out transform hover:scale-105 hover:-translate-y-2 hover:shadow-lg hover:shadow-[#9b87f5]/20">
+                <i class="fab fa-react skill-icon group-hover:text-white group-hover:scale-110 transition-all duration-300"></i>
+                <h3 class="group-hover:text-white transition-colors duration-300">React</h3>
+                <p class="group-hover:text-white/80 transition-colors duration-300">Modern web applications</p>
+            </div>
+            <div class="skill-card group hover:bg-[rgba(155,135,245,0.2)] transition-all duration-300 ease-in-out transform hover:scale-105 hover:-translate-y-2 hover:shadow-lg hover:shadow-[#9b87f5]/20">
+                <i class="fab fa-node-js skill-icon group-hover:text-white group-hover:scale-110 transition-all duration-300"></i>
+                <h3 class="group-hover:text-white transition-colors duration-300">Node.js</h3>
+                <p class="group-hover:text-white/80 transition-colors duration-300">Backend development</p>
+            </div>
+            <div class="skill-card group hover:bg-[rgba(155,135,245,0.2)] transition-all duration-300 ease-in-out transform hover:scale-105 hover:-translate-y-2 hover:shadow-lg hover:shadow-[#9b87f5]/20">
+                <i class="fab fa-git-alt skill-icon group-hover:text-white group-hover:scale-110 transition-all duration-300"></i>
+                <h3 class="group-hover:text-white transition-colors duration-300">Git</h3>
+                <p class="group-hover:text-white/80 transition-colors duration-300">Version control</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects" class="projects">
+        <h2 class="section-title">My Projects</h2>
+        <div class="projects-grid">
+            <a href="https://designforbusiness1.vercel.app/" target="_blank" class="project-card">
+                <img src="https://p16-sign-va.tiktokcdn.com/tos-maliva-avt-0068/4ad8b578469635ef96a490c07cd1eb76~c5_1080x1080.jpeg?lk3s=a5d48078&nonce=77904&refresh_token=b69b8e3370087bc3533104b634703eb6&x-expires=1734332400&x-signature=QNeQ2TJ0uUkL5w6Ipym60E2rkvo%3D&shp=a5d48078&shcp=81f88b70" alt="Project 1">
+                <div class="project-overlay">
+                    <h3>E-Commerce Platform</h3>
+                    <p>Full-stack web application</p>
+                </div>
+            </a>
+            <a href="https://designportofolio2.vercel.app/" target="_blank" class="project-card">
+                <img src="https://p16-sign-va.tiktokcdn.com/tos-maliva-avt-0068/4ad8b578469635ef96a490c07cd1eb76~c5_1080x1080.jpeg?lk3s=a5d48078&nonce=77904&refresh_token=b69b8e3370087bc3533104b634703eb6&x-expires=1734332400&x-signature=QNeQ2TJ0uUkL5w6Ipym60E2rkvo%3D&shp=a5d48078&shcp=81f88b70" alt="Project 2">
+                <div class="project-overlay">
+                    <h3>Portfolio Website</h3>
+                    <p>Responsive design</p>
+                </div>
+            </a>
+            <a href="https://neon-snake-by-ridho.vercel.app/" target="_blank" class="project-card">
+                <img src="https://p16-sign-va.tiktokcdn.com/tos-maliva-avt-0068/4ad8b578469635ef96a490c07cd1eb76~c5_1080x1080.jpeg?lk3s=a5d48078&nonce=77904&refresh_token=b69b8e3370087bc3533104b634703eb6&x-expires=1734332400&x-signature=QNeQ2TJ0uUkL5w6Ipym60E2rkvo%3D&shp=a5d48078&shcp=81f88b70" alt="Project 3">
+                <div class="project-overlay">
+                    <h3>game</h3>
+                    <p>React application</p>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <section id="contact" class="contact">
+        <h2 class="section-title">Contact Me</h2>
+        <form class="contact-form">
+            <div class="form-group">
+                <input type="text" placeholder="Your Name" required>
+            </div>
+            <div class="form-group">
+                <input type="email" placeholder="Your Email" required>
+            </div>
+            <div class="form-group">
+                <textarea placeholder="Your Message" rows="5" required></textarea>
+            </div>
+            <button type="submit">Send Message</button>
+        </form>
+        <div class="social-links">
+            <a href="https://github.com/Ridho-Arrayan" target="_blank"><i class="fab fa-github"></i></a>
+            <a href="https://www.tiktok.com/@ridhoarrayan.26?lang=id-ID" target="_blank"><i class="fab fa-tiktok"></i></a>
+            <a href="https://whatsapp.com/channel/0029Vaoh7bqCRs1lUXir8A3x" target="_blank"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://instagram.com/yourusername" target="_blank"><i class="fab fa-instagram"></i></a>
+        </div>
+    </section>
+
+    <!-- Footer Copyright -->
+    <footer class="py-8 bg-[#1A1F2C] text-[#E5DEFF] border-t border-[#9b87f5]/20">
+        <div class="container mx-auto px-4">
+            <p class="text-base font-medium tracking-wide text-center">
+                <span class="text-[#9b87f5]">©</span> 2024 
+                <span class="text-[#9b87f5] font-semibold">Portfolio</span>
+                <span class="mx-2">|</span> 
+                Crafted with passion & creativity
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Typing animation
+        const typed = new Typed('#typed-text', {
+            strings: [
+                "Frontend Developer",
+                "UI/UX Designer",
+                "Problem Solver",
+                "Creative Thinker"
+            ],
+            typeSpeed: 50,
+            backSpeed: 30,
+            backDelay: 1500,
+            loop: true
+        });
+
+        // Fixed Hamburger menu functionality
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!navLinks.contains(e.target) && !hamburger.contains(e.target)) {
+                navLinks.classList.remove('active');
+            }
+        });
+
+        // Close menu when clicking on a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // ScrollReveal initialization with enhanced animations
+        ScrollReveal().reveal('.about-text', {
+            delay: 200,
+            distance: '50px',
+            origin: 'bottom',
+            duration: 1000,
+            easing: 'cubic-bezier(0.5, 0, 0, 1)',
+            interval: 200
+        });
+
+        ScrollReveal().reveal('.skill-card', {
+            delay: 200,
+            distance: '30px',
+            origin: 'bottom',
+            duration: 1000,
+            interval: 200,
+            scale: 0.85
+        });
+
+        ScrollReveal().reveal('.project-card', {
+            delay: 200,
+            distance: '30px',
+            origin: 'bottom',
+            duration: 1000,
+            interval: 200,
+            scale: 0.9
+        });
+
+        ScrollReveal().reveal('.social-links a', {
+            delay: 200,
+            distance: '20px',
+            origin: 'top',
+            duration: 1000,
+            interval: 200,
+            scale: 0.5
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
